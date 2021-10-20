@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@adiwajshing/baileys": "^3.5.2",
+    "express": "^4.17.1",
     "google-tts-api": "^2.0.2",
     "node-fetch": "^3.0.0"
   }
