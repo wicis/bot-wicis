@@ -9,11 +9,15 @@ bot.listenMessage(async (receive) => {
   if (!isGroup) {
     // personal chat
     if (
-      ["sayang", "syg", "yang", "yank"].some((v) => String(body).toLowerCase().startsWith(v))
+      ["sayang", "syg", "yang", "yank"].some((v) =>
+        String(body).toLowerCase().startsWith(v)
+      )
     ) {
       // await readMessage();
       await reply("iya sayang...");
-    } else if (["bang", "bg"].some((v) => String(body).toLowerCase().startsWith(v))) {
+    } else if (
+      ["bang", "bg"].some((v) => String(body).toLowerCase().startsWith(v))
+    ) {
       await reply("iya bro...");
     } else if (String(body).toLowerCase() === "p") {
       await reply("baca salam sikit kalau wa tu...");
@@ -38,5 +42,7 @@ bot.listenMessage(async (receive) => {
         }
       );
     }
+  } else {
+    // grup
   }
 });
