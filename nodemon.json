@@ -1,0 +1,7 @@
+{
+    "ignore": [
+        "Media/*",
+        "*.json",
+        "test.js"
+    ]
+}

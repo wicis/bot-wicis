@@ -1,0 +1,22 @@
+{
+  "name": "bot-vip",
+  "version": "1.0.0",
+  "description": "untuk belajar",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "belajar",
+    "bot",
+    "whatsapp",
+    "vip"
+  ],
+  "author": "ikhsan",
+  "license": "MIT",
+  "dependencies": {
+    "@adiwajshing/baileys": "^3.5.2",
+    "google-tts-api": "^2.0.2",
+    "node-fetch": "^3.0.0"
+  }
+}
