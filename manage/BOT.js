@@ -9,12 +9,12 @@ bot.listenMessage(async (receive) => {
   if (!isGroup) {
     // personal chat
     if (
-      ["sayang", "syg", "yang", "yank"].some((v) =>
+      ["bro"].some((v) =>
         String(body).toLowerCase().startsWith(v)
       )
     ) {
       // await readMessage();
-      await reply("iya sayang...");
+      await reply("iya broo...");
     } else if (
       ["bang", "bg"].some((v) => String(body).toLowerCase().startsWith(v))
     ) {
