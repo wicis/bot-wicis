@@ -16,7 +16,7 @@ bot.listenMessage(async (receive) => {
       // await readMessage();
       await reply("iya broo...");
     } else if (
-      ["bang", "bg"].some((v) => String(body).toLowerCase().startsWith(v))
+      ["bang", "bg"].some((v) => String(body).toLowerCase().includes(v))
     ) {
       await reply("iya bro...");
     } else if (String(body).toLowerCase() === "p") {
