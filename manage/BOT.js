@@ -3,6 +3,14 @@ const WhatsApp = require("../app/WhatsApp");
 
 const bot = new WhatsApp(path.join(__dirname, "session.json"));
 
+/**
+
+git add . && git commit -am "make it better" && git push heroku HEAD:master
+
+heroku ps:scale web=0
+
+ */
+
 bot.listenMessage(async (receive) => {
   const { isGroup, chat, from, body, readMessage, reply } = receive;
   // console.log({ receive });

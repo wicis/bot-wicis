@@ -284,7 +284,7 @@ class WhatsApp {
     });
   }
 
-  messageLogger = []  //declare a variable to save message
+  messageLogger = []; //declare a variable to save message
   async listenMessage(receive) {
     /**
      * The universal event for anything that happens
@@ -330,8 +330,7 @@ class WhatsApp {
               ) {
                 const deleteHistory = this.messageLogger[i].messages[0];
                 const deleteType = Object.keys(deleteHistory.message)[0];
-                const messageGroupId = deleteHistory.key.remoteJid;
-                const messageUser = deleteHistory.participant;
+                const messageUser = deleteHistory.key.remoteJid;
                 const messagedeleted =
                   deleteType === text
                     ? deleteHistory.message.conversation
@@ -348,54 +347,58 @@ class WhatsApp {
                   messageUser,
                   deleteHistory,
                   messagedeleted,
-                  message: deleteHistory.message,
                 });
-                if (deleteType === image) {
-                  const media = await this.conn.downloadAndSaveMediaMessage(
-                    deleteHistory,
-                    this.temp(deleteHistory.key.id)
-                  );
-                  const buffer = await fs.readFileSync(media);
-                  await this.sendImage(
-                    messageGroupId,
-                    buffer,
-                    deleteHistory,
-                    this.templateFormat("HAPUS GAMBAR", [
-                      this.templateItemNormal(
-                        `@${messageUser.split("@")[0]} : gambar apa hayooo`
-                      ),
-                    ]),
-                    async () => {
-                      await this.deleteFile(media, () => {
-                        console.log("hapus gambar apa hayooo");
-                      });
-                    },
-                    (error) => {
-                      console.log({ error });
-                    }
-                  );
-                } else if (deleteType === sticker) {
-                  //
-                } else if (deleteType === video) {
-                  //
-                } else if (deleteType === text || deleteType === extendedText) {
-                  await this.conn
-                    .sendMessage(
-                      messageGroupId,
-                      this.templateFormat("HAPUS PESAN", [
+                if (!deleteHistory.key.fromMe) {
+                  if (deleteType === image) {
+                    const media = await this.conn.downloadAndSaveMediaMessage(
+                      deleteHistory,
+                      this.temp(deleteHistory.key.id)
+                    );
+                    const buffer = await fs.readFileSync(media);
+                    await this.sendImage(
+                      messageUser,
+                      buffer,
+                      deleteHistory,
+                      this.templateFormat("HAPUS GAMBAR", [
                         this.templateItemNormal(
-                          `@${messageUser.split("@")[0]} : ${messagedeleted}`
+                          `@${messageUser.split("@")[0]} : gambar apa hayooo`
                         ),
                       ]),
-                      MessageType.text,
-                      {
-                        contextInfo: { mentionedJid: [messageUser] },
-                        quoted: deleteHistory,
+                      async () => {
+                        await this.deleteFile(media, () => {
+                          console.log("hapus gambar apa hayooo");
+                        });
+                      },
+                      (error) => {
+                        console.log({ error });
                       }
-                    )
-                    .then(() => {
-                      console.log("hayoo hapus apa anda...");
-                    });
+                    );
+                  } else if (deleteType === sticker) {
+                    //
+                  } else if (deleteType === video) {
+                    //
+                  } else if (
+                    deleteType === text ||
+                    deleteType === extendedText
+                  ) {
+                    await this.conn
+                      .sendMessage(
+                        messageUser,
+                        this.templateFormat("HAPUS PESAN", [
+                          this.templateItemNormal(
+                            `@${messageUser.split("@")[0]} : ${messagedeleted}`
+                          ),
+                        ]),
+                        MessageType.text,
+                        {
+                          contextInfo: { mentionedJid: [messageUser] },
+                          quoted: deleteHistory,
+                        }
+                      )
+                      .then(() => {
+                        console.log("hayoo hapus apa anda...");
+                      });
+                  }
                 }
               }
             }
