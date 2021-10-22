@@ -20,7 +20,7 @@ bot.listenMessage(async (receive) => {
     ) {
       await reply("iya bro...");
     } else if (String(body).toLowerCase() === "p") {
-      await reply("baca salam sikit kalau wa tu...");
+      await reply("404 not found not responding because your not say assalamualaikum...");
     } else if (
       ["halo", "hallo", "helo", "hello", "hai", "hay"].some(
         (v) => String(body).toLowerCase().split(" ")[0] === v
