@@ -284,6 +284,7 @@ class WhatsApp {
     });
   }
 
+  messageLogger = []  //declare a variable to save message
   async listenMessage(receive) {
     /**
      * The universal event for anything that happens
@@ -299,6 +300,110 @@ class WhatsApp {
             `${presence.name}'s presence is ${presence.lastKnownPresence} in ${chat.jid}`
           )
         );
+      }
+
+      const {
+        text,
+        extendedText,
+        contact,
+        location,
+        liveLocation,
+        image,
+        video,
+        sticker,
+        document,
+        audio,
+        product,
+        buttonsMessage,
+      } = MessageType;
+
+      if (!chat.hasNewMessage) {
+        try {
+          if (
+            JSON.parse(JSON.stringify(chat)).messages[0].messageStubType ==
+            "REVOKE"
+          ) {
+            for (let i = 0; i <= this.messageLogger.length; i++) {
+              if (
+                JSON.parse(JSON.stringify(chat)).messages[0].key.id ==
+                this.messageLogger[i].messages[0].key.id
+              ) {
+                const deleteHistory = this.messageLogger[i].messages[0];
+                const deleteType = Object.keys(deleteHistory.message)[0];
+                const messageGroupId = deleteHistory.key.remoteJid;
+                const messageUser = deleteHistory.participant;
+                const messagedeleted =
+                  deleteType === text
+                    ? deleteHistory.message.conversation
+                    : deleteType === extendedText
+                    ? deleteHistory.message.extendedTextMessage.caption
+                    : deleteType === video
+                    ? deleteHistory.message.videoMessage.caption
+                    : deleteType === image
+                    ? deleteHistory.message.imageMessage.text
+                    : deleteType === "buttonsResponseMessage"
+                    ? deleteHistory.message.buttonsResponseMessage.text
+                    : null;
+                console.log("A message has been deleted: ", {
+                  messageUser,
+                  deleteHistory,
+                  messagedeleted,
+                  message: deleteHistory.message,
+                });
+                if (deleteType === image) {
+                  const media = await this.conn.downloadAndSaveMediaMessage(
+                    deleteHistory,
+                    this.temp(deleteHistory.key.id)
+                  );
+                  const buffer = await fs.readFileSync(media);
+                  await this.sendImage(
+                    messageGroupId,
+                    buffer,
+                    deleteHistory,
+                    this.templateFormat("HAPUS GAMBAR", [
+                      this.templateItemNormal(
+                        `@${messageUser.split("@")[0]} : gambar apa hayooo`
+                      ),
+                    ]),
+                    async () => {
+                      await this.deleteFile(media, () => {
+                        console.log("hapus gambar apa hayooo");
+                      });
+                    },
+                    (error) => {
+                      console.log({ error });
+                    }
+                  );
+                } else if (deleteType === sticker) {
+                  //
+                } else if (deleteType === video) {
+                  //
+                } else if (deleteType === text || deleteType === extendedText) {
+                  await this.conn
+                    .sendMessage(
+                      messageGroupId,
+                      this.templateFormat("HAPUS PESAN", [
+                        this.templateItemNormal(
+                          `@${messageUser.split("@")[0]} : ${messagedeleted}`
+                        ),
+                      ]),
+                      MessageType.text,
+                      {
+                        contextInfo: { mentionedJid: [messageUser] },
+                        quoted: deleteHistory,
+                      }
+                    )
+                    .then(() => {
+                      console.log("hayoo hapus apa anda...");
+                    });
+                }
+              }
+            }
+          }
+        } catch {}
+        return;
+      } else {
+        this.messageLogger.push(JSON.parse(JSON.stringify(chat)));
       }
 
       if (!chat.hasNewMessage) return;
@@ -326,20 +431,6 @@ class WhatsApp {
         type === "extendedTextMessage" && content.includes("videoMessage");
       const isQuotedSticker =
         type === "extendedTextMessage" && content.includes("stickerMessage");
-
-      const {
-        text,
-        extendedText,
-        contact,
-        location,
-        liveLocation,
-        image,
-        video,
-        sticker,
-        document,
-        audio,
-        product,
-      } = MessageType;
 
       const body_prefix =
         type === "conversation" &&
@@ -585,7 +676,12 @@ class WhatsApp {
             // save the audio file
             const buffer = Buffer.from(base64, "base64");
             const ran = this.generateRandomString();
-            const locationSave = path.join(__dirname, "..", "temp", ran + ".mp3");
+            const locationSave = path.join(
+              __dirname,
+              "..",
+              "temp",
+              ran + ".mp3"
+            );
             fs.writeFile(locationSave, buffer, { encoding: "base64" }, () => {
               mp3_path(locationSave);
             });
