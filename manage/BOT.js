@@ -16,9 +16,9 @@ bot.listenMessage(async (receive) => {
       // await readMessage();
       await reply("iya broo...");
     } else if (
-      ["bang"].some((v) => String(body).toLowerCase().includes(v))
+      ["sop"].some((v) => String(body).toLowerCase().includes(v))
     ) {
-      await reply("iya bro...");
+      await reply("iyo sop...");
     } else if (String(body).toLowerCase() === "p") {
       await reply("404 not found not responding because your not say assalamualaikum...");
     } else if (
