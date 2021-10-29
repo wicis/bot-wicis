@@ -317,97 +317,97 @@ class WhatsApp {
         buttonsMessage,
       } = MessageType;
 
-      if (!chat.hasNewMessage) {
-        try {
-          if (
-            JSON.parse(JSON.stringify(chat)).messages[0].messageStubType ==
-            "REVOKE"
-          ) {
-            for (let i = 0; i <= this.messageLogger.length; i++) {
-              if (
-                JSON.parse(JSON.stringify(chat)).messages[0].key.id ==
-                this.messageLogger[i].messages[0].key.id
-              ) {
-                const deleteHistory = this.messageLogger[i].messages[0];
-                const deleteType = Object.keys(deleteHistory.message)[0];
-                const messageUser = deleteHistory.key.remoteJid;
-                const messagedeleted =
-                  deleteType === text
-                    ? deleteHistory.message.conversation
-                    : deleteType === extendedText
-                    ? deleteHistory.message.extendedTextMessage.caption
-                    : deleteType === video
-                    ? deleteHistory.message.videoMessage.caption
-                    : deleteType === image
-                    ? deleteHistory.message.imageMessage.text
-                    : deleteType === "buttonsResponseMessage"
-                    ? deleteHistory.message.buttonsResponseMessage.text
-                    : null;
-                console.log("A message has been deleted: ", {
-                  messageUser,
-                  deleteHistory,
-                  messagedeleted,
-                });
-                if (!deleteHistory.key.fromMe) {
-                  if (deleteType === image) {
-                    const media = await this.conn.downloadAndSaveMediaMessage(
-                      deleteHistory,
-                      this.temp(deleteHistory.key.id)
-                    );
-                    const buffer = await fs.readFileSync(media);
-                    await this.sendImage(
-                      messageUser,
-                      buffer,
-                      deleteHistory,
-                      this.templateFormat("HAPUS GAMBAR", [
-                        this.templateItemNormal(
-                          `@${messageUser.split("@")[0]} : gambar apa hayooo`
-                        ),
-                      ]),
-                      async () => {
-                        await this.deleteFile(media, () => {
-                          console.log("hapus gambar apa hayooo");
-                        });
-                      },
-                      (error) => {
-                        console.log({ error });
-                      }
-                    );
-                  } else if (deleteType === sticker) {
-                    //
-                  } else if (deleteType === video) {
-                    //
-                  } else if (
-                    deleteType === text ||
-                    deleteType === extendedText
-                  ) {
-                    await this.conn
-                      .sendMessage(
-                        messageUser,
-                        this.templateFormat("HAPUS PESAN", [
-                          this.templateItemNormal(
-                            `@${messageUser.split("@")[0]} : ${messagedeleted}`
-                          ),
-                        ]),
-                        MessageType.text,
-                        {
-                          contextInfo: { mentionedJid: [messageUser] },
-                          quoted: deleteHistory,
-                        }
-                      )
-                      .then(() => {
-                        console.log("hayoo hapus apa anda...");
-                      });
-                  }
-                }
-              }
-            }
-          }
-        } catch {}
-        return;
-      } else {
-        this.messageLogger.push(JSON.parse(JSON.stringify(chat)));
-      }
+      // if (!chat.hasNewMessage) {
+      //   try {
+      //     if (
+      //       JSON.parse(JSON.stringify(chat)).messages[0].messageStubType ==
+      //       "REVOKE"
+      //     ) {
+      //       for (let i = 0; i <= this.messageLogger.length; i++) {
+      //         if (
+      //           JSON.parse(JSON.stringify(chat)).messages[0].key.id ==
+      //           this.messageLogger[i].messages[0].key.id
+      //         ) {
+      //           const deleteHistory = this.messageLogger[i].messages[0];
+      //           const deleteType = Object.keys(deleteHistory.message)[0];
+      //           const messageUser = deleteHistory.key.remoteJid;
+      //           const messagedeleted =
+      //             deleteType === text
+      //               ? deleteHistory.message.conversation
+      //               : deleteType === extendedText
+      //               ? deleteHistory.message.extendedTextMessage.caption
+      //               : deleteType === video
+      //               ? deleteHistory.message.videoMessage.caption
+      //               : deleteType === image
+      //               ? deleteHistory.message.imageMessage.text
+      //               : deleteType === "buttonsResponseMessage"
+      //               ? deleteHistory.message.buttonsResponseMessage.text
+      //               : null;
+      //           console.log("A message has been deleted: ", {
+      //             messageUser,
+      //             deleteHistory,
+      //             messagedeleted,
+      //           });
+      //           if (!deleteHistory.key.fromMe) {
+      //             if (deleteType === image) {
+      //               const media = await this.conn.downloadAndSaveMediaMessage(
+      //                 deleteHistory,
+      //                 this.temp(deleteHistory.key.id)
+      //               );
+      //               const buffer = await fs.readFileSync(media);
+      //               await this.sendImage(
+      //                 messageUser,
+      //                 buffer,
+      //                 deleteHistory,
+      //                 this.templateFormat("HAPUS GAMBAR", [
+      //                   this.templateItemNormal(
+      //                     `@${messageUser.split("@")[0]} : gambar apa hayooo`
+      //                   ),
+      //                 ]),
+      //                 async () => {
+      //                   await this.deleteFile(media, () => {
+      //                     console.log("hapus gambar apa hayooo");
+      //                   });
+      //                 },
+      //                 (error) => {
+      //                   console.log({ error });
+      //                 }
+      //               );
+      //             } else if (deleteType === sticker) {
+      //               //
+      //             } else if (deleteType === video) {
+      //               //
+      //             } else if (
+      //               deleteType === text ||
+      //               deleteType === extendedText
+      //             ) {
+      //               await this.conn
+      //                 .sendMessage(
+      //                   messageUser,
+      //                   this.templateFormat("HAPUS PESAN", [
+      //                     this.templateItemNormal(
+      //                       `@${messageUser.split("@")[0]} : ${messagedeleted}`
+      //                     ),
+      //                   ]),
+      //                   MessageType.text,
+      //                   {
+      //                     contextInfo: { mentionedJid: [messageUser] },
+      //                     quoted: deleteHistory,
+      //                   }
+      //                 )
+      //                 .then(() => {
+      //                   console.log("hayoo hapus apa anda...");
+      //                 });
+      //             }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   } catch {}
+      //   return;
+      // } else {
+      //   this.messageLogger.push(JSON.parse(JSON.stringify(chat)));
+      // }
 
       if (!chat.hasNewMessage) return;
       chat = JSON.parse(JSON.stringify(chat)).messages[0];
